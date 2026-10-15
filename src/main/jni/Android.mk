@@ -36,6 +36,14 @@ LOCAL_SRC_FILES := \
             vloader.cpp
 include $(BUILD_SHARED_LIBRARY)
 
+# HoloCraft marker calibration: Minecraft JVM -> pojlib.markercalib.PassthroughCamera
+include $(CLEAR_VARS)
+LOCAL_LDLIBS := -llog
+LOCAL_SHARED_LIBRARIES := pojavexec
+LOCAL_MODULE := holocraft_markercalib
+LOCAL_SRC_FILES := markercalib/markercalib_bridge.c
+include $(BUILD_SHARED_LIBRARY)
+
 include $(CLEAR_VARS)
 LOCAL_MODULE := istdio
 LOCAL_SRC_FILES := \
