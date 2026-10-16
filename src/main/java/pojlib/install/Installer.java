@@ -127,7 +127,7 @@ public class Installer {
 
                     if (!clientFile.exists()) {
                         DownloadUtils.downloadFile(minecraftVersionInfo.downloads.client.url, clientFile);
-                    } else if (DownloadUtils.compareSHA1(clientFile, minecraftVersionInfo.downloads.client.sha1)) {
+                    } else if (!DownloadUtils.compareSHA1(clientFile, minecraftVersionInfo.downloads.client.sha1)) {
                         clientFile.delete();
                         DownloadUtils.downloadFile(minecraftVersionInfo.downloads.client.url, clientFile);
                     }
