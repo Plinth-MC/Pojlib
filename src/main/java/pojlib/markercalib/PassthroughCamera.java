@@ -34,7 +34,7 @@ import java.util.List;
  * <p>
  *     The Passthrough Camera API (Quest 3 / 3S, Horizon OS v74+) is plain Android Camera2:
  *     the passthrough cameras are listed by {@link CameraManager} and tagged with the Meta vendor
- *     characteristics {@code com.meta.extra_metadata.camera_source} (1 = passthrough) and
+ *     characteristics {@code com.meta.extra_metadata.camera_source} (0 = passthrough) and
  *     {@code com.meta.extra_metadata.position} (0 = left, 1 = right). Needs the runtime permissions
  *     {@code android.permission.CAMERA} and {@code horizonos.permission.HEADSET_CAMERA}.
  * </p>
@@ -56,7 +56,7 @@ public final class PassthroughCamera {
 
     private static final String KEY_CAMERA_SOURCE = "com.meta.extra_metadata.camera_source";
     private static final String KEY_CAMERA_POSITION = "com.meta.extra_metadata.position";
-    private static final int CAMERA_SOURCE_PASSTHROUGH = 1;
+    private static final int CAMERA_SOURCE_PASSTHROUGH = 0;
 
     // ---- status (mirrored in the add-on's QuestCameraBridge) ----
     public static final int STATUS_IDLE = 0;
