@@ -265,7 +265,7 @@ public class Installer {
 
     public static void installVisor(Activity activity, MinecraftInstances.Instance instance) throws IOException {
         if (!instance.versionName.equals("1.20.1")) {
-            throw new IOException("HoloCraft only supports Minecraft 1.20.1");
+            throw new IOException("Plinth only supports Minecraft 1.20.1");
         }
 
         applyQuestDefaults(instance);
