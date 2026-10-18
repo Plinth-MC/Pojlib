@@ -317,7 +317,7 @@ public class JREUtils {
                 "-Dglfwstub.windowHeight=" + 720,
                 "-Dglfwstub.initEgl=false",
                 "-Dlog4j2.formatMsgNoLookups=true", //Log4j RCE mitigation
-                "-Dnet.minecraft.clientmodname=" + "HoloCraft",
+                "-Dnet.minecraft.clientmodname=" + "Plinth",
                 "-Dext.net.resolvPath=" + resConfFile,
                 "-Dsodium.checks.issue2561=false",
                 "-Dorg.sqlite.lib.path=" + ctx.getApplicationInfo().nativeLibraryDir

@@ -265,7 +265,7 @@ public class Installer {
 
     public static void installVisor(Activity activity, MinecraftInstances.Instance instance) throws IOException {
         if (!instance.versionName.equals("1.20.1")) {
-            throw new IOException("HoloCraft only supports Minecraft 1.20.1");
+            throw new IOException("Plinth only supports Minecraft 1.20.1");
         }
 
         applyQuestDefaults(instance);
@@ -280,6 +280,7 @@ public class Installer {
                         || name.equals("visor.jar")
                         || name.equals("visoressentials.jar")
                         || name.startsWith("holocraftmr")
+                        || name.equals("plinth.jar")
                         || name.contains("moreculling")
                         || name.contains("noisium")
                         || name.contains("badoptimizations")
@@ -300,9 +301,9 @@ public class Installer {
                 new File(mods, "VisorEssentials.jar"),
                 FileUtil.loadFromAssetToByte(activity, "mods/VisorEssentials.jar")
         );
-        byte[] addon = FileUtil.loadFromAssetToByte(activity, "mods/HoloCraftMR.jar");
+        byte[] addon = FileUtil.loadFromAssetToByte(activity, "mods/Plinth.jar");
         if (addon != null) {
-            FileUtils.writeByteArrayToFile(new File(mods, "HoloCraftMR.jar"), addon);
+            FileUtils.writeByteArrayToFile(new File(mods, "Plinth.jar"), addon);
         }
         FileUtils.writeByteArrayToFile(
                 new File(mods, "MoreCulling.jar"),
