@@ -8,7 +8,7 @@ The installer copies these jars from APK assets into the instance's `mods/` fold
 
 | File | Source | License |
 |---|---|---|
-| `Visor.jar` | HoloCraft-MR/Visor `coah-quest-support` @ 1232f63, `:visor-fabric:1.20.1:buildAndCollect` -> `Visor-0.6.0-beta+mc1.20.1-fabric.jar` (sha256 3ab61e87df6652bd7b5a0eebacdd22bfd47e98440c17cc850b7f99483f9baa7b) | MPL-2.0 (Visor), AtumVR inside |
+| `Visor.jar` | Plinth-MC/Visor `coah-quest-support` @ 1232f63, `:visor-fabric:1.20.1:buildAndCollect` -> `Visor-0.6.0-beta+mc1.20.1-fabric.jar` (sha256 3ab61e87df6652bd7b5a0eebacdd22bfd47e98440c17cc850b7f99483f9baa7b) | MPL-2.0 (Visor), AtumVR inside |
 | `VisorEssentials.jar` | prebuilt 0.4.0 by PhoenixRa, added by coah | LGPLv3 |
 | `BadOptimizations.jar`, `C2ME.jar`, `Chunky.jar`, `MoreCulling.jar`, `Noisium.jar` | prebuilt Modrinth releases, added by coah | see each mod |
 
