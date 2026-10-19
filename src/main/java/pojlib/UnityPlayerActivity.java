@@ -98,7 +98,8 @@ public class UnityPlayerActivity extends ActivityGroup implements IUnityPlayerLi
         mUnityPlayer.getFrameLayout().requestFocus();
 
         updateWindowSize(this);
-        GLOBAL_CLIPBOARD = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        pojlib.util.Clipboard.init(this);
+        GLOBAL_CLIPBOARD = pojlib.util.Clipboard.GLOBAL_CLIPBOARD;
 
         mInputManager = new RemapperManager(this, new RemapperView.Builder(null)
                 .remapA(true)
@@ -170,31 +171,11 @@ public class UnityPlayerActivity extends ActivityGroup implements IUnityPlayerLi
     }
 
     public static void querySystemClipboard() {
-        ClipData clipData = GLOBAL_CLIPBOARD.getPrimaryClip();
-        if(clipData == null) {
-            AWTInputBridge.nativeClipboardReceived(null, null);
-            return;
-        }
-        ClipData.Item firstClipItem = clipData.getItemAt(0);
-        //TODO: coerce to HTML if the clip item is styled
-        CharSequence clipItemText = firstClipItem.getText();
-        if(clipItemText == null) {
-            AWTInputBridge.nativeClipboardReceived(null, null);
-            return;
-        }
-        AWTInputBridge.nativeClipboardReceived(clipItemText.toString(), "plain");
+        pojlib.util.Clipboard.querySystemClipboard();
     }
 
     public static void putClipboardData(String data, String mimeType) {
-        ClipData clipData = null;
-        switch(mimeType) {
-            case "text/plain":
-                clipData = ClipData.newPlainText("AWT Paste", data);
-                break;
-            case "text/html":
-                clipData = ClipData.newHtmlText("AWT Paste", data, data);
-        }
-        if(clipData != null) GLOBAL_CLIPBOARD.setPrimaryClip(clipData);
+        pojlib.util.Clipboard.putClipboardData(data, mimeType);
     }
 
     private void createGamepad(InputDevice inputDevice) {
