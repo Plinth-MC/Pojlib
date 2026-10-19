@@ -178,6 +178,12 @@ public class API {
     public static boolean prelaunch(Activity activity, MinecraftInstances instances, MinecraftInstances.Instance instance) {
         gameReady = false;
         launcherXRStopped = false;
+        try {
+            InstanceHandler.waitForSetup(instance);
+        } catch (ExecutionException | InterruptedException e) {
+            Logger.getInstance().appendToLog("Instance setup failed: " + e);
+            return false;
+        }
         instance.updateMods(instances);
         try {
             Installer.installVisor(activity, instance);

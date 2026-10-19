@@ -223,6 +223,16 @@ public class InstanceHandler {
         return instance;
     }
 
+    // block until a new instance is done downloading, then return the saved copy
+    public static MinecraftInstances.Instance waitForSetup(MinecraftInstances.Instance instance) throws ExecutionException, InterruptedException {
+        CompletableFuture<Void> pending = pendingCreates.get(instance.instanceName);
+        if (pending != null && !pending.isDone()) {
+            Logger.getInstance().appendToLog("Waiting for instance setup to finish");
+            pending.get();
+        }
+        return reload(instance);
+    }
+
     // re-read an instance from instances.json so launch sees what setup wrote
     private static MinecraftInstances.Instance reload(MinecraftInstances.Instance instance) {
         MinecraftInstances fresh = load(Constants.USER_HOME);
@@ -363,12 +373,7 @@ public class InstanceHandler {
 
     public static void launchInstance(Activity activity, MinecraftAccount account, MinecraftInstances.Instance instance) {
         try {
-            CompletableFuture<Void> pending = pendingCreates.get(instance.instanceName);
-            if (pending != null && !pending.isDone()) {
-                Logger.getInstance().appendToLog("Waiting for instance setup to finish before launching");
-                pending.get();
-            }
-            instance = reload(instance);
+            instance = waitForSetup(instance);
             API.currentInstance = instance;
             JREUtils.redirectAndPrintJRELog();
             VLoader.setAndroidInitInfo(activity);
