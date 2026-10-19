@@ -36,9 +36,6 @@ import pojlib.util.json.ProjectInfo;
 //This works for the base game as well as mod loaders
 public class Installer {
 
-    private static final String IMMEDIATELY_FAST_URL = "https://cdn.modrinth.com/data/5ZwdcRci/versions/iwYUrQJO/ImmediatelyFast-Fabric-1.5.5%2B1.20.4.jar";
-    private static final String IMMEDIATELY_FAST_SHA1 = "9f0110b60dc752ca093f2fc10a72d221b6dc8ac3";
-
     private static final String[] REQUIRED_JRE_FILES = {
             "bin/java",
             "release",
@@ -271,7 +268,6 @@ public class Installer {
         applyQuestDefaults(instance);
         File mods = new File(instance.gameDir, "mods");
         mods.mkdirs();
-        installImmediatelyFast(mods);
         File[] existing = mods.listFiles();
         if (existing != null) {
             for (File file : existing) {
@@ -399,25 +395,6 @@ public class Installer {
             Files.write(options.toPath(), lines, StandardCharsets.UTF_8);
         }
         marker.createNewFile();
-    }
-
-    private static void installImmediatelyFast(File mods) throws IOException {
-        File target = new File(mods, "ImmediatelyFast.jar");
-        if (target.isFile() && DownloadUtils.compareSHA1(target, IMMEDIATELY_FAST_SHA1)) {
-            return;
-        }
-
-        File update = new File(mods, "ImmediatelyFast.jar.update");
-        FileUtils.deleteQuietly(update);
-        try {
-            DownloadUtils.downloadFile(IMMEDIATELY_FAST_URL, update, 348818);
-            if (!DownloadUtils.compareSHA1(update, IMMEDIATELY_FAST_SHA1)) {
-                throw new IOException("ImmediatelyFast download hash mismatch");
-            }
-            Files.move(update.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } finally {
-            FileUtils.deleteQuietly(update);
-        }
     }
 
     public static class AsyncDownload implements Runnable {
