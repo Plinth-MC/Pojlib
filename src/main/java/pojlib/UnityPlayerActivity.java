@@ -480,6 +480,8 @@ public class UnityPlayerActivity extends ActivityGroup implements IUnityPlayerLi
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // HoloCraft marker calibration camera permissions (requested on demand, not at start)
+        if (pojlib.markercalib.PassthroughCamera.onRequestPermissionsResult(requestCode, permissions, grantResults)) return;
         mUnityPlayer.permissionResponse(this, requestCode, permissions, grantResults);
     }
 
