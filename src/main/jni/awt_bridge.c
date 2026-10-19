@@ -38,7 +38,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
         dalvikJavaVMPtr = vm;
         JNIEnv *env = NULL;
         (*vm)->GetEnv(vm, (void**)&env, JNI_VERSION_1_4);
-        class_MainActivity = (*env)->NewGlobalRef(env,(*env)->FindClass(env, "pojlib/UnityPlayerActivity"));
+        class_MainActivity = (*env)->NewGlobalRef(env,(*env)->FindClass(env, "pojlib/util/Clipboard"));
         method_QuerySystemClipboard = (*env)->GetStaticMethodID(env, class_MainActivity, "querySystemClipboard", "()V");
         method_PutClipboardData = (*env)->GetStaticMethodID(env, class_MainActivity, "putClipboardData", "(Ljava/lang/String;Ljava/lang/String;)V");
     } else if (dalvikJavaVMPtr != vm) {
