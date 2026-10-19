@@ -201,6 +201,13 @@ public class API {
     }
 
     /**
+     * True once a new instance has finished downloading and can be launched
+     */
+    public static boolean isInstanceReady(MinecraftInstances.Instance instance) {
+        return instance != null && InstanceHandler.isInstanceReady(instance.instanceName);
+    }
+
+    /**
      * Launch an instance
      *
      * @param activity Android activity object
