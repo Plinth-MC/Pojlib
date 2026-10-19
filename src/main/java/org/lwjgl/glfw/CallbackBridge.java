@@ -9,7 +9,6 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 
 import dalvik.annotation.optimization.CriticalNative;
-import pojlib.UnityPlayerActivity;
 import pojlib.util.Clipboard;
 
 import pojlib.input.GrabListener;
@@ -169,8 +168,14 @@ public class CallbackBridge {
     }
 
     public static void restartUnitySession(Activity activity) {
-        UnityPlayerActivity unity = (UnityPlayerActivity) activity;
-        unity.reinitUnity();
+        // relaunch whatever the launcher activity is, works with or without unity
+        activity.runOnUiThread(() -> {
+            Intent start = activity.getPackageManager().getLaunchIntentForPackage(activity.getPackageName());
+            start.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            activity.startActivity(start);
+            activity.finish();
+            android.os.Process.killProcess(android.os.Process.myPid());
+        });
     }
 
     public static void addGrabListener(GrabListener listener) {
