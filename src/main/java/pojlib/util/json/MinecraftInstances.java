@@ -79,6 +79,12 @@ public class MinecraftInstances {
         public boolean defaultMods;
 
         public List<String> generateLaunchArgs(MinecraftAccount account) {
+            String missing = missingLaunchField(account);
+            if (missing != null) {
+                Logger.getInstance().appendToLog("instance not ready: " + missing + " is empty");
+                throw new IllegalStateException("instance not ready: " + missing + " is empty");
+            }
+
             String[] mcArgs = {"--username", account.username, "--version", versionName, "--gameDir", gameDir,
                     "--assetsDir", assetsDir, "--assetIndex", assetIndex, "--uuid", account.uuid.replace("-", ""),
                     "--accessToken", account.accessToken, "--userType", account.userType, "--versionType", "release"};
@@ -93,6 +99,23 @@ public class MinecraftInstances {
             }
 
             return allArgs;
+        }
+
+        private String missingLaunchField(MinecraftAccount account) {
+            if (isEmpty(classpath)) return "classpath";
+            if (isEmpty(mainClass)) return "mainClass";
+            if (isEmpty(assetsDir)) return "assetsDir";
+            if (isEmpty(assetIndex)) return "assetIndex";
+            if (isEmpty(gameDir)) return "gameDir";
+            if (account == null) return "account";
+            if (isEmpty(account.accessToken)) return "accessToken";
+            if (isEmpty(account.username)) return "username";
+            if (isEmpty(account.uuid)) return "uuid";
+            return null;
+        }
+
+        private static boolean isEmpty(String s) {
+            return s == null || s.isEmpty();
         }
 
         public ProjectInfo[] toArray() {
