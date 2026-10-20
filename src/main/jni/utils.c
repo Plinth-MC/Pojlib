@@ -13,13 +13,14 @@ typedef void (*android_update_LD_LIBRARY_PATH_t)(char*);
 
 char** convert_to_char_array(JNIEnv *env, jobjectArray jstringArray) {
 	int num_rows = (*env)->GetArrayLength(env, jstringArray);
-	char **cArray = (char **) malloc(num_rows * sizeof(char*));
+	char **cArray = (char **) malloc((num_rows + 1) * sizeof(char*));
 	jstring row;
 	
 	for (int i = 0; i < num_rows; i++) {
 		row = (jstring) (*env)->GetObjectArrayElement(env, jstringArray, i);
-		cArray[i] = (char*)(*env)->GetStringUTFChars(env, row, 0);
+		cArray[i] = row == NULL ? NULL : (char*)(*env)->GetStringUTFChars(env, row, 0);
     }
+	cArray[num_rows] = NULL;
 	
     return cArray;
 }
@@ -30,7 +31,9 @@ void free_char_array(JNIEnv *env, jobjectArray jstringArray, const char **charAr
 	
 	for (int i = 0; i < num_rows; i++) {
 		row = (jstring) (*env)->GetObjectArrayElement(env, jstringArray, i);
-		(*env)->ReleaseStringUTFChars(env, row, charArray[i]);
+		if (row != NULL && charArray[i] != NULL) {
+			(*env)->ReleaseStringUTFChars(env, row, charArray[i]);
+		}
 	}
 }
 

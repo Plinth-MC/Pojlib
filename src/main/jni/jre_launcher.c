@@ -162,6 +162,15 @@ JNIEXPORT jint JNICALL Java_com_oracle_dalvik_VMLauncher_launchJVM(JNIEnv *env, 
     int argc = (*env)->GetArrayLength(env, argsArray);
     char **argv = convert_to_char_array(env, argsArray);
 
+    for (int i = 0; i < argc; i++) {
+        if (argv[i] == NULL || argv[i][0] == '\0') {
+            LOGE("Arg %d is empty, refusing to launch the JVM", i);
+            free_char_array(env, argsArray, (const char **) argv);
+            free(argv);
+            return -1;
+        }
+    }
+
     LOGD("Done processing args");
 
     res = launchJVM(argc, argv);

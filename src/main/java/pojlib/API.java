@@ -178,6 +178,12 @@ public class API {
     public static boolean prelaunch(Activity activity, MinecraftInstances instances, MinecraftInstances.Instance instance) {
         gameReady = false;
         launcherXRStopped = false;
+        try {
+            InstanceHandler.waitForSetup(instance);
+        } catch (ExecutionException | InterruptedException e) {
+            Logger.getInstance().appendToLog("Instance setup failed: " + e);
+            return false;
+        }
         instance.updateMods(instances);
         try {
             Installer.installVisor(activity, instance);
@@ -198,6 +204,13 @@ public class API {
         }
         DownloadManager.reset();
         return true;
+    }
+
+    /**
+     * True once a new instance has finished downloading and can be launched
+     */
+    public static boolean isInstanceReady(MinecraftInstances.Instance instance) {
+        return instance != null && InstanceHandler.isInstanceReady(instance.instanceName);
     }
 
     /**

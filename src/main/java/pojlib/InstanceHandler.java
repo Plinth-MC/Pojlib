@@ -16,8 +16,10 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
@@ -115,6 +117,14 @@ public class InstanceHandler {
     }
 
     //creates a new instance of a minecraft version, install game + mod loader, stores non login related launch info to json
+    // instances that are still downloading, keyed by name
+    private static final Map<String, CompletableFuture<Void>> pendingCreates = new ConcurrentHashMap<>();
+
+    public static boolean isInstanceReady(String instanceName) {
+        CompletableFuture<Void> pending = pendingCreates.get(instanceName);
+        return pending == null || pending.isDone();
+    }
+
     public static MinecraftInstances.Instance create(Activity activity, MinecraftInstances instances, String instanceName, String gameDir, boolean useDefaultMods, String minecraftVersion, String modLoader, String imageURL, Consumer<MinecraftInstances.Instance> postInstall) {
         File instancesFile = new File(gameDir + "/instances.json");
         if (instancesFile.exists()) {
@@ -175,7 +185,7 @@ public class InstanceHandler {
         instances1.add(instance);
         instances.instances = instances1.toArray(new MinecraftInstances.Instance[0]);
 
-        CompletableFuture.supplyAsync(() ->
+        CompletableFuture<Void> setup = CompletableFuture.supplyAsync(() ->
         {
             try {
                 CompletableFuture<String> clientClasspath = Installer.installClient(minecraftVersionInfo, gameDir);
@@ -207,7 +217,32 @@ public class InstanceHandler {
             Logger.getInstance().appendToLog("Finished Creating Instance!");
             return null;
         });
+        pendingCreates.put(instanceName, setup);
+        setup.whenComplete((v, e) -> pendingCreates.remove(instanceName, setup));
 
+        return instance;
+    }
+
+    // block until a new instance is done downloading, then return the saved copy
+    public static MinecraftInstances.Instance waitForSetup(MinecraftInstances.Instance instance) throws ExecutionException, InterruptedException {
+        CompletableFuture<Void> pending = pendingCreates.get(instance.instanceName);
+        if (pending != null && !pending.isDone()) {
+            Logger.getInstance().appendToLog("Waiting for instance setup to finish");
+            pending.get();
+        }
+        return reload(instance);
+    }
+
+    // re-read an instance from instances.json so launch sees what setup wrote
+    private static MinecraftInstances.Instance reload(MinecraftInstances.Instance instance) {
+        MinecraftInstances fresh = load(Constants.USER_HOME);
+        if (fresh.instances != null) {
+            for (MinecraftInstances.Instance i : fresh.instances) {
+                if (i.instanceName != null && i.instanceName.equals(instance.instanceName)) {
+                    return i;
+                }
+            }
+        }
         return instance;
     }
 
@@ -338,6 +373,7 @@ public class InstanceHandler {
 
     public static void launchInstance(Activity activity, MinecraftAccount account, MinecraftInstances.Instance instance) {
         try {
+            instance = waitForSetup(instance);
             API.currentInstance = instance;
             JREUtils.redirectAndPrintJRELog();
             VLoader.setAndroidInitInfo(activity);
