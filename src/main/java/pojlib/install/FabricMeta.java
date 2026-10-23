@@ -55,6 +55,9 @@ public class FabricMeta {
         FabricVersion latest = null;
         Version latestVer = null;
         for (FabricVersion version : getVersions()) {
+            if(!version.stable)
+                continue;
+
             Version newVer = getVersionFromFabric(version);
             if(newVer == null)
                 continue;
