@@ -9,9 +9,8 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 
 import dalvik.annotation.optimization.CriticalNative;
-import pojlib.UnityPlayerActivity;
+import pojlib.util.Clipboard;
 
-import pojlib.UnityPlayerActivity;
 import pojlib.input.GrabListener;
 import pojlib.input.LwjglGlfwKeycode;
 
@@ -108,12 +107,12 @@ public class CallbackBridge {
     public static @Nullable String accessAndroidClipboard(int type, String copy) {
         switch (type) {
             case CLIPBOARD_COPY:
-                UnityPlayerActivity.GLOBAL_CLIPBOARD.setPrimaryClip(ClipData.newPlainText("Copy", copy));
+                Clipboard.GLOBAL_CLIPBOARD.setPrimaryClip(ClipData.newPlainText("Copy", copy));
                 return null;
 
             case CLIPBOARD_PASTE:
-                if (UnityPlayerActivity.GLOBAL_CLIPBOARD.hasPrimaryClip() && UnityPlayerActivity.GLOBAL_CLIPBOARD.getPrimaryClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
-                    return UnityPlayerActivity.GLOBAL_CLIPBOARD.getPrimaryClip().getItemAt(0).getText().toString();
+                if (Clipboard.GLOBAL_CLIPBOARD.hasPrimaryClip() && Clipboard.GLOBAL_CLIPBOARD.getPrimaryClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+                    return Clipboard.GLOBAL_CLIPBOARD.getPrimaryClip().getItemAt(0).getText().toString();
                 } else {
                     return "";
                 }
@@ -169,8 +168,14 @@ public class CallbackBridge {
     }
 
     public static void restartUnitySession(Activity activity) {
-        UnityPlayerActivity unity = (UnityPlayerActivity) activity;
-        unity.reinitUnity();
+        // relaunch whatever the launcher activity is, works with or without unity
+        activity.runOnUiThread(() -> {
+            Intent start = activity.getPackageManager().getLaunchIntentForPackage(activity.getPackageName());
+            start.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            activity.startActivity(start);
+            activity.finish();
+            android.os.Process.killProcess(android.os.Process.myPid());
+        });
     }
 
     public static void addGrabListener(GrabListener listener) {

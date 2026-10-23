@@ -32,6 +32,7 @@ import pojlib.install.QuiltMeta;
 import pojlib.install.VersionInfo;
 import pojlib.util.Constants;
 import pojlib.util.FileUtil;
+import pojlib.util.LWJGLInstaller;
 import pojlib.util.VLoader;
 import pojlib.util.download.DownloadManager;
 import pojlib.util.json.MinecraftInstances;
@@ -192,7 +193,7 @@ public class InstanceHandler {
                 CompletableFuture<String> minecraftClasspath = Installer.installLibraries(minecraftVersionInfo, gameDir);
                 CompletableFuture<String> modLoaderClasspath = Installer.installLibraries(finalModLoaderVersionInfo, gameDir);
                 CompletableFuture<String> assetsFuture = Installer.installAssets(minecraftVersionInfo, gameDir);
-                String lwjgl = UnityPlayerActivity.installLWJGL(activity);
+                String lwjgl = LWJGLInstaller.installLWJGL(activity);
 
                 CompletableFuture<Void> installFuture = CompletableFuture.allOf(clientClasspath, minecraftClasspath, modLoaderClasspath, assetsFuture);
                 installFuture.get();
