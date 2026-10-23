@@ -32,33 +32,39 @@ public class FabricMeta {
         if(verName.length < 3) {
             return null;
         }
-        int major = Integer.parseInt(verName[0]);
-        int minor = Integer.parseInt(verName[1]);
-        int patch = Integer.parseInt(verName[2]);
+        int major, minor, patch;
+        try {
+            major = Integer.parseInt(verName[0]);
+            minor = Integer.parseInt(verName[1]);
+            patch = Integer.parseInt(verName[2]);
+        } catch (NumberFormatException e) {
+            // pre-release tags like 0.17.0-beta.1
+            return null;
+        }
 
         return new Version(major, minor, patch);
     }
 
+    static int compare(Version a, Version b) {
+        if(a.major != b.major) return Integer.compare(a.major, b.major);
+        if(a.minor != b.minor) return Integer.compare(a.minor, b.minor);
+        return Integer.compare(a.patch, b.patch);
+    }
+
     public static FabricVersion getLatestVersion() {
         FabricVersion latest = null;
+        Version latestVer = null;
         for (FabricVersion version : getVersions()) {
-            if(latest == null) {
-                latest = version;
+            if(!version.stable)
                 continue;
-            }
 
             Version newVer = getVersionFromFabric(version);
-            Version latestVer = getVersionFromFabric(latest);
-
-            if(newVer == null || latestVer == null)
+            if(newVer == null)
                 continue;
 
-            if(latestVer.major < newVer.major) {
+            if(latestVer == null || compare(newVer, latestVer) > 0) {
                 latest = version;
-            } else if(latestVer.major == newVer.major && latestVer.minor < newVer.major) {
-                latest = version;
-            } else if(latestVer.major == newVer.major && latestVer.minor == newVer.major && latestVer.patch < newVer.patch) {
-                latest = version;
+                latestVer = newVer;
             }
         }
         return latest;
